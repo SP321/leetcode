@@ -1,0 +1,1 @@
+cat words.txt| sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | tr -s '[:space:]' '\n' | sort | uniq -c | awk '{print $2" "$1}'|sort -k2 -nr
