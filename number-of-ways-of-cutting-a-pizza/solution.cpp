@@ -1,41 +1,67 @@
+template<typename T>
+class Prefix2D {
+private:
+    vector<vector<T>> prefix;
+public:
+    Prefix2D() {}
+    Prefix2D(vector<vector<T>> matrix) {
+        int m = matrix.size(), n = matrix[0].size();
+        prefix.resize(m + 1, vector<T>(n + 1, 0));
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                prefix[i][j]=prefix[i-1][j]+prefix[i][j-1]-prefix[i-1][j-1]+matrix[i-1][j-1];
+            }
+        }
+    }
+    Prefix2D(const vector<string>& matrix) {
+        int m = matrix.size(), n = matrix[0].size();
+        prefix.resize(m + 1, vector<T>(n + 1, 0));
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                prefix[i][j]=prefix[i-1][j]+prefix[i][j-1]-prefix[i-1][j-1]+(matrix[i-1][j-1]=='A');
+            }
+        }
+    }
+    int getSum(int x1, int y1, int x2, int y2) {
+        return prefix[x2 + 1][y2 + 1] - prefix[x2 + 1][y1] - prefix[x1][y2 + 1] + prefix[x1][y1];
+    }
+};
+
 class Solution {
 public:
-    const int mod = 1e9 + 7;
-    vector<vector<vector<int>>> dp;
-    vector<vector<int>> prefix;   
-    int r, c;
+    const int MOD = 1e9 + 7;
 
-    int getSum(int x1, int y1, int x2, int y2){
-        // x2 y2 exclusive sum
-        return prefix[x2][y2] + prefix[x1][y1] - prefix[x1][y2] - prefix[x2][y1];
-    }
+    int ways(std::vector<std::string>& pizza, int k) {
+        int rows = pizza.size();
+        int cols = pizza[0].size();
 
-    int solve(int i, int j, int k){
-        if(dp[i][j][k] != -1)
-            return dp[i][j][k];
-        if(k == 0)
-            return getSum(i, j, r, c) > 0;
-        int res = 0;
-        // Divide horizontally
-        for(int x = i + 1; x < r; x++)
-            if(getSum(i, j, x, c) > 0 && getSum(x, j, r, c) > 0)
-                res = (res + solve(x, j, k - 1)) % mod;
-        // Divide vertically
-        for(int y = j + 1; y < c; y++)
-            if(getSum(i, j, r, y) > 0 && getSum(i, y, r, c) > 0)
-                res = (res + solve(i, y, k - 1)) % mod;
-        dp[i][j][k] = res;
-        return res;
-    }
+        Prefix2D<int> prefix(pizza);
+        std::vector<std::vector<std::vector<uint64_t>>> dp(rows, std::vector<std::vector<uint64_t>>(cols, std::vector<uint64_t>(k, 0)));
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                dp[i][j][0] = prefix.getSum(i, j, rows - 1, cols - 1) > 0;
+            }
+        }
+        for (int s = 1; s < k; s++) {
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < cols; j++) {
+                    uint64_t& cur = dp[i][j][s];
+                    for (int r = i + 1; r < rows; r++) {
+                        if (prefix.getSum(i, j, r - 1, cols - 1) > 0 && prefix.getSum(r, j, rows - 1, cols - 1) > 0) {
+                            cur += dp[r][j][s - 1];
+                            cur %= MOD;
+                        }
+                    }
+                    for (int c = j + 1; c < cols; c++) {
+                        if (prefix.getSum(i, j, rows - 1, c - 1) > 0 && prefix.getSum(i, c, rows - 1, cols - 1) > 0) {
+                            cur += dp[i][c][s - 1];
+                            cur %= MOD;
+                        }
+                    }
+                }
+            }
+        }
 
-    int ways(vector<string>& pizza, int k) {
-        r = pizza.size();
-        c = pizza[0].size();
-        prefix.assign(r + 1, vector<int>(c + 1, 0));
-        dp.assign(r, vector<vector<int>>(c, vector<int>(k, -1)));
-        for(int i = 0; i < r; i++)
-            for(int j = 0; j < c; j++)
-                prefix[i+1][j+1] = prefix[i+1][j] + prefix[i][j+1] - prefix[i][j] + (pizza[i][j] == 'A');
-        return solve(0, 0, k - 1);
+        return dp[0][0][k - 1];
     }
 };
