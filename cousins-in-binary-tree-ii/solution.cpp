@@ -1,62 +1,52 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
 class Solution
 {
 public:
-      TreeNode *replaceValueInTree(TreeNode *root)
-      {
-            dfs(root, nullptr, 0);
-            calculate(root, nullptr, 0);
-            update(root);
-            return root;
-      }
+        int maxdepth=0;
+        map<int, long long> depth_sum;
+        map<int, vector<TreeNode *>> depth_map;
+        map<TreeNode *, TreeNode *> sibling;
+        TreeNode *replaceValueInTree(TreeNode *root)
+        {
+                dfs(root, nullptr, 0);
+                for(int i=0;i<=maxdepth;i++){
+                    map<TreeNode *, int> new_vals;
+                    for(auto &cur:depth_map[i]){
+                        long long value=depth_sum[i]- cur->val;
+                        TreeNode *s=sibling[cur];
+                        if(s)
+                            value-=s->val;
+                        new_vals[cur]=value;
+                    }
+                    for(auto &cur:depth_map[i])
+                        cur->val=new_vals[cur];
+                }
+                return root;
+        }
 
-      map<int, int> depth_sum;
-      map<TreeNode *, TreeNode *> parent;
-      map<TreeNode *, int> new_vals;
-
-      void dfs(TreeNode *node, TreeNode *p, int depth)
-      {
-            if (!node)
-            {
-                  return;
-            }
-            depth_sum[depth] += node->val;
-            parent[node] = p;
-            dfs(node->left, node, depth + 1);
-            dfs(node->right, node, depth + 1);
-      }
-
-      void calculate(TreeNode *node, TreeNode *p, int depth)
-      {
-            if (!node)
-            {
-                  return;
-            }
-
-            int sum = depth_sum[depth];
-            if (parent[node])
-            {
-                  if (parent[node]->left)
-                        sum -= parent[node]->left->val;
-                  if (parent[node]->right)
-                        sum -= parent[node]->right->val;
-            }
-            else
-                  sum -= node->val;
-
-            new_vals[node] = sum;
-
-            calculate(node->left, node, depth + 1);
-            calculate(node->right, node, depth + 1);
-      }
-
-      void update(TreeNode *node)
-      {
-            if (!node)
-            {
-                  return;
-            }
-            node->val = new_vals[node];
-            update(node->left);
-            update(node->right);
-      }
+        void dfs(TreeNode *node, TreeNode *p, int depth)
+        {
+                maxdepth=max(depth,maxdepth);
+                depth_sum[depth] += node->val;
+                depth_map[depth].push_back(node);
+                if(node->left){
+                    sibling[node->left]=node->right;
+                    dfs(node->left, node, depth + 1);
+                }
+                if(node->right){
+                    sibling[node->right]=node->left;
+                    dfs(node->right, node, depth + 1);
+                }
+        }
+        
 };
