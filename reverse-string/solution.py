@@ -1,9 +1,11 @@
 class Solution:
     def reverseString(self, s: List[str]) -> None:
-        n=len(s)
-        i=0
-        j=n-1
-        while i<j:
+        """
+        Do not return anything, modify s in-place instead.
+        """
+        def rev(i,j):
+            if i>=j:
+                return
             s[i],s[j]=s[j],s[i]
-            i+=1
-            j-=1
+            rev(i+1,j-1)
+        rev(0,len(s)-1)
