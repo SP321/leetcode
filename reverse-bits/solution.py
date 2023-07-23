@@ -1,7 +1,7 @@
 class Solution:
     def reverseBits(self, n: int) -> int:
-        bits=bin(n)[2:]
-        reverse=bits[::-1]
-        reverse=reverse+ '0'*(32-len(reverse))
-        return int(reverse,2)
-        
+        ans = 0
+        for i in range(32):
+            bit = (n >> i) & 1
+            ans += (bit << (31 - i))
+        return ans
