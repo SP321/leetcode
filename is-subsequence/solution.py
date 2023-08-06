@@ -1,9 +1,15 @@
 class Solution:
     def isSubsequence(self, s: str, t: str) -> bool:
-        j=0
-        for i in s:
-            k=t[j:].find(i)
-            if k==-1:
+        @cache
+        def dfs(i,j):
+            if i==len(s):
+                return True
+            if j==len(t):
                 return False
-            j+=k+1
-        return True
+            ans=dfs(i,j+1)
+            if s[i]==t[j]:
+                ans=ans or dfs(i+1,j+1)
+            return ans
+        return dfs(0,0)
+                
+                

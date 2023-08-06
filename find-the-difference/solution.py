@@ -1,6 +1,6 @@
 class Solution:
     def findTheDifference(self, s: str, t: str) -> str:
-        result = 0
-        for char in s + t:
-            result ^= ord(char)
-        return chr(result)
+        ans=0
+        for i in s+t:
+            ans^=ord(i)
+        return chr(ans)
