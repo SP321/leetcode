@@ -1,10 +1,8 @@
 class UnionFind:
     def __init__(self, n):
         self.parent = [i for i in range(n)]
-        self.count = [1] * n # count instead of rank to check if mst is complete.
-        self.max_size=0
-        self.n=n
-        
+        self.rank = [0] * n
+
     def find(self, x):
         if self.parent[x] != x:
             self.parent[x] = self.find(self.parent[x])
@@ -15,20 +13,14 @@ class UnionFind:
         rootY = self.find(y)
 
         if rootX != rootY:
-            if self.count[rootX] < self.count[rootY]:
+            if self.rank[rootX] < self.rank[rootY]:
                 self.parent[rootX] = rootY
-                self.count[rootY] += self.count[rootX]
-                self.max_size=max(self.max_size,self.count[rootY])
             else:
                 self.parent[rootY] = rootX
-                self.count[rootX] += self.count[rootY]
-                self.max_size=max(self.max_size,self.count[rootX])
+                if self.rank[rootX] == self.rank[rootY]:
+                    self.rank[rootX] += 1
             return True
         return False
-
-    def is_everything_connected(self):
-        return self.max_size==self.n
-    
 
 class Solution:
     def findCriticalAndPseudoCriticalEdges(self, n: int, edges: List[List[int]]) -> List[List[int]]:
@@ -60,11 +52,12 @@ class Solution:
         
         for i in indexes_sorted:
             mst_weight_without_current = get_mst_weight(exclude_edge_index=i)
-            mst_weight_with_current = get_mst_weight(include_edge_index=i)
-            
+
             if mst_weight_without_current > mst_weight:
                 critical.append(i)
-            elif mst_weight_without_current == mst_weight and mst_weight_with_current == mst_weight:
-                pseudo_critical.append(i)
+            else:
+                mst_weight_with_current = get_mst_weight(include_edge_index=i)
+                if mst_weight_with_current == mst_weight:
+                    pseudo_critical.append(i)
         
         return [critical, pseudo_critical]
