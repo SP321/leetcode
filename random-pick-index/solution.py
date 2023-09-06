@@ -1,15 +1,12 @@
 class Solution:
 
     def __init__(self, nums: List[int]):
-        self.x={}
-        for i in range(len(nums)):
-            if nums[i] not in self.x:
-                self.x[nums[i]]=[]
-            self.x[nums[i]].append(i)
+        self.d=defaultdict(list)
+        for i,num in enumerate(nums):
+            self.d[num].append(i)
 
     def pick(self, target: int) -> int:
-        return random.choice(self.x[target])
-        
+        return random.choice(self.d[target])
 
 
 # Your Solution object will be instantiated and called as such:
