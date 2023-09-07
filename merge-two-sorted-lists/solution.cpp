@@ -11,41 +11,15 @@
 class Solution {
 public:
     ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {
-        ListNode* head=nullptr;
-        ListNode* a;
-        ListNode* tail=nullptr;
-        if(list1==nullptr)
-            return list2;
-        if(list2==nullptr)
+        if (!list1) return list2;
+        if (!list2) return list1;
+
+        if (list1->val <= list2->val) {
+            list1->next = mergeTwoLists(list1->next, list2);
             return list1;
-        while(list1!=nullptr && list2 !=nullptr){
-            while(list1!=nullptr && list1->val<=list2->val){
-                a=list1;
-                if(head==nullptr)
-                    head=a;
-                else
-                    tail->next=a;
-                tail=a;
-                cout<<a->val<<endl;
-                list1=list1->next;
-            }
-            if(list1==nullptr || list2 ==nullptr)
-                break;
-            while(list2 !=nullptr && list1->val>=list2->val){
-                a=list2;
-                if(head==nullptr)
-                    head=a;
-                else
-                    tail->next=a;
-                tail=a;
-                cout<<a->val<<endl;
-                list2=list2->next;
-            }
+        } else {
+            list2->next = mergeTwoLists(list1, list2->next);
+            return list2;
         }
-        if(list1!=nullptr)
-            tail->next=list1;
-        else if (list2!=nullptr)
-            tail->next=list2;
-        return head;
     }
 };
