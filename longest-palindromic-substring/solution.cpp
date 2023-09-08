@@ -1,24 +1,26 @@
 class Solution {
 public:
     string longestPalindrome(string s) {
-        int n=s.size();
-        cout<<n<<endl;
-        vector<vector<int>>dp(n,vector<int>(n,0));
-        int ai=0;
-        int len=0;
-        for(int i=n-1;i>=0;i--){
-            for(int j=i;j<n;j++){
-                if(s[i]==s[j])
-                    if(j-1<=i+1 || dp[i+1][j-1]==1){
-                        dp[i][j]=1;
-                        if(j-i+1>len){
-                            len=j-i+1;
-                            ai=i;
-                        }
-                    }
+        if (s.empty()) return "";
+        
+        int start = 0, end = 0;
+        for (int i = 0; i < s.size(); i++) {
+            int len1 = expandAroundCenter(s, i, i);
+            int len2 = expandAroundCenter(s, i, i + 1);
+            int len = max(len1, len2);
+            if (len > (end - start)) {
+                start = i - (len - 1) / 2;
+                end = i + len / 2;
             }
         }
-        return s.substr(ai,len);
+        return s.substr(start, end - start + 1);
+    }
 
+    int expandAroundCenter(string s, int left, int right) {
+        while (left >= 0 && right < s.size() && s[left] == s[right]) {
+            left--;
+            right++;
+        }
+        return right - left - 1;
     }
 };
