@@ -7,4 +7,4 @@ class Solution:
             if rowIndex==0:
                 return 1
             return dfs(rowIndex-1,i-1)+dfs(rowIndex-1,i)
-        return [dfs(rowIndex,i) for i in range(rowIndex+1)]
+        return [dfs(rowIndex,i) for i in range(rowIndex,-1,-1)]
