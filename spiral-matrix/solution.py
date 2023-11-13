@@ -21,5 +21,3 @@ class Solution:
                     ans.append(matrix[i][left])
                 left += 1
         return ans
-                
-
