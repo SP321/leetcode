@@ -1,0 +1,13 @@
+class Solution:
+    def getPermutation(self, n: int, k: int) -> str:
+        ans = ""
+        nums = [i for i in range(1,n+1)]
+        for i in range(1,n+1):
+            c = math.factorial(n-i)
+            index,k=divmod(k,c)
+            if k==0:
+                index-=1
+                k+=c
+            ans += str(nums[index])
+            del nums[index]
+        return ans
