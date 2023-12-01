@@ -7,7 +7,7 @@ class Solution:
         if n < 0:
             x = 1 / x
             n = -n
-        result = self.myPow(x * x, n // 2)
-        if n % 2 == 1:
+        result = self.myPow(x * x, n>>1)
+        if n&1==1:
             result *= x
         return result

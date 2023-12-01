@@ -1,3 +1,13 @@
 class Solution:
     def permute(self, nums: List[int]) -> List[List[int]]:
-        return permutations(nums)
+        ans = []
+        def dfs(seq):
+            if len(seq) == len(nums):
+                ans.append(seq)
+                return
+            for n in nums:
+                if n in seq:
+                    continue
+                dfs(seq+[n])
+        dfs([])
+        return ans
