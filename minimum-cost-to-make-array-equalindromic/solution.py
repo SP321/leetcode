@@ -1,23 +1,11 @@
 class Solution:
-    def minimumCost(self, nums: List[int]) -> int:
-        def make_best(x):
-            x=int(x)
-            palindromes=set()
-            for i in range(10):
-                s=[i for i in str(x)]
-                s[(len(s)-1)//2]=str(i)
-                palindromes.add(make_palindrome(s))
-                palindromes.add(make_palindrome(s.copy()[:-1]))
-            return min(palindromes,key=get_score)
-        def make_palindrome(s):
-            if not s:
-                return 0
-            for i in range(len(s)//2):
-                s[len(s)-i-1]=s[i]
-            a=int(''.join(s))
-            return a
-        def get_score(x):
-            return sum(abs(x-i) for i in nums)
-        med=statistics.median(nums)
-        palindrome=make_best(med)
-        return get_score(palindrome)
+    def minimumCost(self, nums):
+        nums.sort()
+        pal = lambda x: str(x) == str(x)[::-1]
+        left = rght = nums[len(nums)//2]
+
+        while not pal(left): left-= 1
+        while not pal(rght): rght+= 1
+
+        return min(sum(map(lambda x: abs(x - left), nums)),
+                   sum(map(lambda x: abs(x - rght), nums)))
