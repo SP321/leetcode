@@ -10,5 +10,3 @@ class Solution:
                 ans[b]=i-b
             x.append(i)
         return ans
-
-

@@ -14,6 +14,5 @@ class Solution:
                 elif x=='*':
                     s.append(a*b)
                 elif x=='/':
-                    val=a/b
-                    s.append(math.floor(val) if val>0 else math.ceil(val))
+                    s.append(int(a/b))
         return s.pop()
