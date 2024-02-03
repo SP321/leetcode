@@ -12,4 +12,3 @@ class Solution:
             ans=max(ans,dfs(i+1,k,0)+cur_max*(k-left+1))
             return ans
         return dfs(0,k,0)
-            
