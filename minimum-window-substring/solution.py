@@ -10,19 +10,17 @@ class Solution:
                     return False
             return True
 
-        minl = n + 1
-        ans_right = 0
+        ans_right = n
         ans_left = 0
-        j = 0
-        for i in range(n):
-            c[s[i]] += 1
-            while j <= i and counter_gte(c, c1):
-                if i - j  < minl:
-                    minl = i - j
-                    ans_left = j
-                    ans_right = i
-                c[s[j]] -= 1
-                j += 1
+        i=0
+        for j in range(n):
+            c[s[j]] += 1
+            while i <= j and counter_gte(c, c1):
+                if j - i  < ans_right-ans_left+1:
+                    ans_left = i
+                    ans_right = j
+                c[s[i]] -= 1
+                i += 1
 
-        return s[ans_left:ans_right + 1] if minl != n + 1 else ""
+        return s[ans_left:ans_right + 1] if ans_right-ans_left+1 != n + 1 else ""
         
