@@ -4,9 +4,10 @@ class Solution:
         s=0
         c=0
         ans=-1
-        for i,x in enumerate(nums):
+        for x in nums:
             if c>=2 and x<s:
-                ans=s+x
+                ans=x+s
             s+=x
             c+=1
         return ans
+        
