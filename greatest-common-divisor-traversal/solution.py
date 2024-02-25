@@ -1,3 +1,24 @@
+class DSU:
+    def __init__(self, n):
+        self.parent = list(range(n))
+        self.rank = [0] * n
+
+    def find(self, x):
+        if self.parent[x] != x:
+            self.parent[x] = self.find(self.parent[x])
+        return self.parent[x]
+
+    def union(self, x, y):
+        xr, yr = self.find(x), self.find(y)
+        if xr == yr:
+            return False
+        if self.rank[xr] < self.rank[yr]:
+            xr, yr = yr, xr
+        self.parent[yr] = xr
+        if self.rank[xr] == self.rank[yr]:
+            self.rank[xr] += 1
+        return True
+
 class Solution:
     def canTraverseAllPairs(self, nums: List[int]) -> bool:
         def prime_factors(n):
@@ -13,25 +34,14 @@ class Solution:
                 factors.add(n)
             return factors
 
-        def find(parent, i):
-            if parent[i] != i:
-                parent[i] = find(parent, parent[i])
-            return parent[i]
-
-        def union(parent, i, j):
-            parent[find(parent, i)] = find(parent, j)
-
         n = len(nums)
-        max_num = max(nums)
-        parent = list(range(max_num + 1))
-
+        s=DSU(max(nums)+1)
         for num in nums:
-            factors = prime_factors(num)
-            for factor in factors:
-                union(parent, num, factor)
+            for factor in prime_factors(num):
+                s.union(num, factor)
 
-        group = find(parent, nums[0])
+        group = s.find(nums[0])
         for num in nums[1:]:
-            if find(parent, num) != group or num==1:
+            if s.find(num) != group or num==1:
                 return False
         return True
