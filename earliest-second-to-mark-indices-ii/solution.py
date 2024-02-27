@@ -1,33 +1,33 @@
 class Solution:
-    def earliestSecondToMarkIndices(self, A: List[int], B: List[int]) -> int:
-        firsts = {}
-        for i, b in enumerate(B):
-            if A[b - 1] and b not in firsts:
-                firsts[b] = i
+    def earliestSecondToMarkIndices(self, a: List[int], b: List[int]) -> int:
+        n=len(a)
+        m=len(b)
+        f=set()
+        firsts=set()
+        total=sum(a)
+        b=[x-1 for x in b]
+        for i,x in enumerate(b):
+            if x not in f and a[x]>1:
+                f.add(x)
+                firsts.add(i)
         
-        firsts_inv = {i: b for b, i in firsts.items()}
-
-        def possible(bound):
-            # Is B[:bound] enough to clear A?
-            pq = []
-            mark = 0
-
-            for i in range(bound - 1, -1, -1):
-                if i in firsts_inv:
-                    heappush(pq, A[firsts_inv[i] - 1])
-                    
+        def check(k):
+            h=[]
+            mark=0
+            for i in range(k-1,-1,-1):
+                if i in firsts:
+                    heappush(h,a[b[i]])
                     if mark:
-                        mark -= 1
+                        mark-=1
                     else:
-                        mark += 1
-                        heappop(pq)
+                        mark+=1
+                        heappop(h)
                 else:
-                    mark += 1
-
-            return sum(A) - sum(pq) + len(A) - len(pq) <= mark
-        
-        M=len(B)
-        pos= bisect.bisect_left(range(M+1),True,key=possible)
-        if pos==M+1:
+                    mark+=1
+            return total-sum(h)+len(a)-len(h)<=mark
+        pos=bisect.bisect_left(range(1,m+1),True,key=check)
+        if pos==m:
             return -1
-        return pos
+        return pos+1
+
+
