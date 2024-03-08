@@ -1,6 +1,11 @@
 class Solution:
     def maxFrequencyElements(self, nums: List[int]) -> int:
         c=Counter(nums)
-        x=list(c.values())
-        mx=max(x)
-        return mx*x.count(mx)
+        cur=-1
+        ans=0
+        for val,x in c.most_common():
+            if x<cur:
+                break
+            ans+=x
+            cur=x
+        return ans
