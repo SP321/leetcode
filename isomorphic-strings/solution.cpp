@@ -1,19 +1,20 @@
 class Solution {
 public:
     bool isIsomorphic(string s, string t) {
-        map<char, char> x;
-        set<char> y;
-        for (int i = 0; i < s.length(); ++i) {
-            if (x.find(s[i]) == x.end()) {
-                if (y.find(t[i]) == y.end())
-                    y.insert(t[i]);
-                else
-                    return 0;
-                x[s[i]] = t[i];
+        int hash[256]= {0};
+        bool istCharmapped[256]= {0};
+        for(int i=0; i<s.size(); i++){
+            if(hash[s[i]]==0 && istCharmapped[t[i]] ==0){
+                hash[s[i]]= t[i];
+                istCharmapped[t[i]]= true; 
             }
-            if (x[s[i]] != t[i])
-                return 0;
         }
-        return 1;
+
+        for(int i=0; i<s.size(); i++){
+            if (char(hash[s[i]])!= t[i] ){
+                return false; 
+            }
+        }
+        return true; 
     }
 };
