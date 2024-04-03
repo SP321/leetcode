@@ -16,7 +16,7 @@ class Solution:
         
         if word_counts[word[0]] > word_counts[word[-1]]:
             word = word[::-1]
-
+    
         def dp(x, y, i):
             if not (0 <= x < n and 0 <= y < m):
                 return False
