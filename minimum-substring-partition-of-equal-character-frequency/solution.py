@@ -1,34 +1,15 @@
 class Solution:
     def minimumSubstringsInPartition(self, s: str) -> int:
-        N = len(s)
-        INF = 10 ** 20
-        orda = ord('a')
-
-        nxt = collections.defaultdict(list)
-        
-        for start in range(N):
-            f = collections.Counter()
-            mx = 0
-            total = 0
-            for end in range(start, N):
-                c = ord(s[end]) - orda
-                f[c] += 1
-                
-                if f[c] > mx:
-                    mx = f[c]
-                total += 1
-                
-                if mx * len(f) == total:
-                    nxt[start].append(end)
-        
+        n=len(s)
         @cache
-        def go(index):
-            if index == N:
+        def dp(i):
+            if i==n:
                 return 0
-            
-            best = INF
-            for nindex in nxt[index]:
-                best = min(best, go(nindex + 1) + 1)
-            return best
-        
-        return go(0)
+            ans=inf
+            c=Counter()
+            for j in range(i,n):
+                c[s[j]]+=1
+                if len(set(c.values()))==1:
+                    ans=min(ans,dp(j+1)+1)
+            return ans
+        return dp(0)

@@ -1,49 +1,35 @@
-
 class Solution:
     def maximumSafenessFactor(self, grid: List[List[int]]) -> int:
-        n = len(grid)
-        dist = [[0]*n for _ in range(n)]
-        moves = [(0,1),(1,0),(-1,0),(0,-1)]
-        moves_corner = [(-1,-1),(-1,1),(1,-1),(1,1)]
-        queue = deque()
+        n=len(grid)
         for i in range(n):
             for j in range(n):
-                if grid[i][j] == 1:
-                    queue.append((i,j))
-                    dist[i][j] = 0
-                else:
-                    dist[i][j] = float('inf')
+                if grid[i][j]==0:
+                    grid[i][j]=inf
+                if grid[i][j]==1:
+                    grid[i][j]=0
+        for i in range(n):
+            for j in range(n):
+                if i>0:
+                    grid[i][j]=min(grid[i-1][j]+1,grid[i][j])
+                if j>0:
+                    grid[i][j]=min(grid[i][j-1]+1,grid[i][j])
+        for i in range(n-1,-1,-1):
+            for j in range(n-1,-1,-1):
+                if i!=n-1:
+                    grid[i][j]=min(grid[i+1][j]+1,grid[i][j])
+                if j!=n-1:
+                    grid[i][j]=min(grid[i][j+1]+1,grid[i][j])
 
-        while queue:
-            new_queue = deque()
-            while queue:
-                x, y = queue.popleft()
-                for dx, dy in moves:
-                    nx, ny = x + dx, y + dy
-                    if 0 <= nx < n and 0 <= ny < n and dist[nx][ny] > dist[x][y] + 1:
-                        dist[nx][ny] = dist[x][y] + 1
-                        new_queue.append((nx, ny))
-                for dx, dy in moves_corner:
-                    nx, ny = x + dx, y + dy
-                    if 0 <= nx < n and 0 <= ny < n and dist[nx][ny] > dist[x][y] + 2:
-                        dist[nx][ny] = dist[x][y] + 2
-                        new_queue.append((nx, ny))
-            queue = new_queue
-
-        safeness = [[float('-inf')] * n for _ in range(n)]
-        safeness[0][0] = dist[0][0]
-        queue = [(-safeness[0][0], 0, 0)]
-        
-        while queue:
-            safe, x, y = heapq.heappop(queue)
-            safe = -safe
-            if (x, y) == (n-1, n-1):
-                return safe
-            for dx, dy in moves:
-                nx, ny = x + dx, y + dy
-                if 0 <= nx < n and 0 <= ny < n:
-                    new_safeness = min(safe, dist[nx][ny])
-                    if new_safeness > safeness[nx][ny]:
-                        safeness[nx][ny] = new_safeness
-                        heapq.heappush(queue, (-new_safeness, nx, ny))
-                        
+        h=[(-grid[0][0],0,0)]
+        vis=set([(0,0)])
+        ans=inf
+        while h:
+            dist,x,y=heappop(h)
+            ans=min(ans,-dist)
+            if x==n-1 and y==n-1:
+                return ans
+            for xx,yy in [[x+1,y],[x-1,y],[x,y+1],[x,y-1]]:
+                if 0<=xx<n and 0<=yy<n and (xx,yy) not in vis:
+                    vis.add((xx,yy))
+                    heappush(h,(-grid[xx][yy],xx,yy))
+        assert(False,"WTF")
