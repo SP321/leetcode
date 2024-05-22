@@ -10,5 +10,4 @@ class Solution:
                 if s[i:j]== s[i:j][::-1]:
                     backtrack(j,pre+[s[i:j]])
         backtrack(0,[])
-        return ans            
-            
+        return ans
