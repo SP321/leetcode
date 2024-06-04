@@ -2,8 +2,8 @@ class Solution:
     def longestPalindrome(self, s: str) -> int:
         c=Counter(s)
         ans=0
+        o=0
         for x in c.values():
             ans+=x-x%2
-            if x%2 and ans%2==0:
-                ans+=1
-        return ans
+            o+=x%2
+        return ans+min(1,o)
