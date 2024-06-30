@@ -1,43 +1,42 @@
-class UnionFind:
-    def __init__(self,n):
-        self.n=n
-        self.parent = [i for i in range(n+1)]
-        self.rank = [1]*(n+1)
-    
-    def union(self, a, b):
-        a, b = self.find(a), self.find(b)
-        if a == b:
-            return 0
-        if self.rank[a] == self.rank[b]:
-            self.rank[a] += 1
-        elif self.rank[b] > self.rank[a]:
-            a, b = b, a
-        self.parent[b] = a
-        self.n-=1
-        return 1
-    
+class DSU:
+    def __init__(self, n):
+        self.parent = list(range(n))
+        self.rank = [0] * n
+
     def find(self, x):
-        if x != self.parent[x]:
+        if self.parent[x] != x:
             self.parent[x] = self.find(self.parent[x])
         return self.parent[x]
+
+    def union(self, x, y):
+        xr, yr = self.find(x), self.find(y)
+        if xr == yr:
+            return False
+        if self.rank[xr] < self.rank[yr]:
+            xr, yr = yr, xr
+        self.parent[yr] = xr
+        if self.rank[xr] == self.rank[yr]:
+            self.rank[xr] += 1
+        return True
+
         
         
 class Solution:
     def maxNumEdgesToRemove(self, n: int, edges: List[List[int]]) -> int:
-        ua=UnionFind(n)
-        ub=UnionFind(n)
+        s1=DSU(n+1)
+        s2=DSU(n+1)
         c=0
         for t,u,v in edges:
             if t==3:
-                x=ua.union(u,v)
-                y=ub.union(u,v)
-                if x==1 or y==1:
-                    c+=1
+                a=s1.union(u,v)
+                b=s2.union(u,v)
+                c+=a or b
+        c1,c2=0,0
         for t,u,v in edges:
             if t==1:
-                c+=ua.union(u,v)
+                c1+=s1.union(u,v)
             if t==2:
-                c+=ub.union(u,v)
-        if ua.n==1 and ub.n==1:
-            return len(edges)-c
+                c2+=s2.union(u,v)
+        if c+c1==n-1 and c+c2==n-1:
+            return len(edges)-c-c1-c2
         return -1
