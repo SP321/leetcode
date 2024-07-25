@@ -1,30 +1,8 @@
 class Solution:
     def sortArray(self, nums: List[int]) -> List[int]:
-        def mergesort(arr = nums):
-                if len(arr) - 1:
-                    mid = len(arr) // 2
-                    left = arr[:mid]
-                    right = arr[mid:]
-                    mergesort(left)
-                    mergesort(right)
-                    i = j = k = 0
-                    while i < len(left) and j < len(right):
-                        if left[i] <= right[j]:
-                            arr[k] = left[i]
-                            i += 1
-                        else:
-                            arr[k] = right[j]
-                            j += 1
-                        k += 1
-                    
-                    while i < len(left):
-                        arr[k] = left[i]
-                        i += 1
-                        k += 1
-                    
-                    while j < len(right):
-                        arr[k] = right[j]
-                        j += 1
-                        k += 1
-        mergesort()
-        return nums
+        bucket = [0]*(10**5+1)
+        for x in nums: bucket[x + 5*10**4] += 1
+        ans = []
+        for i, x in enumerate(bucket, -5*10**4): 
+            ans.extend([i]*x)
+        return ans 
