@@ -1,45 +1,39 @@
 class Solution:
     def timeTaken(self, edges: List[List[int]]) -> List[int]:
-        
-        g = defaultdict(list)
-        for u, v in edges:
-            g[u].append( (v, 1 if v&1 else 2) )
-            g[v].append( (u, 1 if u&1 else 2) )
-
-        n = len(g)
-        
-        def dfs(u, p=-1):
-            leaf_dist[u] = 0
+        g=defaultdict(list)
+        for u,v in edges:
+            g[u].append( (v,2-(v&1)))
+            g[v].append( (u,2-(u&1)))
+        n=len(edges)+1
+        h=[0]*n
+        def dfs(u,p):
             for v,w in g[u]:
-                if v == p:
-                    continue
-                dfs(v, u)
-                leaf_dist[u] = max(leaf_dist[u], leaf_dist[v] + w)
-
-        def dfs2(u, p=-1):
-            mx, smx = 0, 0
+                if v!=p:
+                    dfs(v,u)
+                    h[u]=max(h[u],h[v]+w)
+        d=[0]*n
+        def dfs2(u,p):
+            mx,mx2=0,0
+            up=2-(u&1)
             for v,w in g[u]:
-                if v == p:
-                    continue
-                cur=leaf_dist[v]+w
-                if cur > mx:
-                    mx, smx = cur, mx
-                elif cur > smx:
-                    smx = cur
-
-            up = 1 if (u & 1) else 2
+                if v!=p:
+                    down=2-(v&1)
+                    dist=down+h[v]
+                    if dist>mx:
+                        mx,mx2=dist,mx
+                    elif dist>mx2:
+                        mx2=dist
             for v,w in g[u]:
-                if v == p:
-                    continue
-                if leaf_dist[v] + w == mx:
-                    dist[v] = max(dist[v], max(dist[u] , smx ) + up ) 
-                else:
-                    dist[v] = max(dist[v], max(dist[u],  mx) + up )
-                dfs2(v, u)
-
-        leaf_dist, dist = [0] * n, [0] * n
-        dfs(0)
-        dfs2(0) # max dist other than subtree
+                if v!=p:
+                    down=2-(v&1)
+                    dist=down+h[v]
+                    if dist==mx:
+                        d[v]=max(up+mx2,up+d[u])
+                    else:
+                        d[v]=max(up+mx,up+d[u])
+                    dfs2(v,u)
+        dfs(0,-1)
+        dfs2(0,-1)
         for i in range(n):
-            dist[i] = max(dist[i], leaf_dist[i])
-        return dist
+            d[i]=max(d[i],h[i])
+        return d
