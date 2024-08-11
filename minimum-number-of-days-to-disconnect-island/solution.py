@@ -34,3 +34,4 @@ class Solution:
                     else:
                         grid[i][j]=1
         return 2
+
