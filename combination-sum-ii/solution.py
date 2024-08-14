@@ -1,6 +1,7 @@
 class Solution:
     def combinationSum2(self, candidates: List[int], target: int) -> List[List[int]]:
-        ans = []
+        n=len(candidates)
+        ans=[]
         def dfs(start, target, prefix):
             if target == 0:
                 ans.append(prefix[:])
