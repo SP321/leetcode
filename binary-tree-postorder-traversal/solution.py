@@ -8,7 +8,6 @@ class Solution:
     def postorderTraversal(self, root: Optional[TreeNode]) -> List[int]:
         ans=[]
         def dfs(node):
-            nonlocal ans
             if not node:
                 return
             dfs(node.left)
