@@ -1,125 +1,50 @@
 class Solution {
 public:
-    bool isDivisibleBy7(string& s) {
-        int remainder = 0;
-        for (char c : s) {
-            remainder = (remainder * 10 + (c - '0')) % 7;
-        }
-        return remainder == 0;
-    }
     string largestPalindrome(int n, int k) {
-        string ans="";
-        if(k==1||k==3||k==9){
-            for(int i=1;i<=n;i++){
-                ans+='9';
-            }
-        }else if(k==2){
-            if(n==1){
-                ans+='8';
-            }else if(n==2){
-                ans+="88";
-            }else{
-                ans+='8';
-                for(int i=0;i<n-2;i++){
-                    ans+='9';
-                }
-                ans+='8';
-            }
-        }else if(k==4){
-            if(n==1){
-                ans+='8';
-            }else if(n==2){
-                ans+="88";
-            }else if(n==3){
-                ans+="888";
-            }else{
-                ans+="88";
-                for(int i=0;i<n-4;i++){
-                    ans+='9';
-                }
-                ans+="88";
-            }
-        }else if(k==5){
-            if(n==1){
-                ans+='5';
-            }else if(n==2){
-                ans+="55";
-            }else{
-                ans+='5';
-                for(int i=0;i<n-2;i++){
-                    ans+='9';
-                }
-                ans+='5';
-            }
-        }else if(k==8){
-            if(n<=6){
-                for(int i=0;i<n;i++){
-                    ans+='8';
-                }
-            }else{
-                ans+="888";
-                for(int i=0;i<n-6;i++){
-                    ans+='9';
-                }
-                ans+="888";
-            }
-        }else if(k==6){
-            if(n==1){
-                ans+='6';
-            }else if(n==2){
-                ans+="66";
-            }else{
-                ans+='8';
-                if((n-2)%2==0){
-                    for(int i=0;i<((n-2)/2)-1;i++){
-                        ans+='9';
-                    }
-                    ans+='7';
-                    reverse(ans.begin(),ans.end());
-                    string s2=ans;
-                    reverse(ans.begin(),ans.end());
-                    ans+=s2;
-                }else{
-                    for(int i=0;i<((n-2)/2);i++){
-                        ans+='9';
-                    }
-                    reverse(ans.begin(),ans.end());
-                    string s2=ans;
-                    reverse(ans.begin(),ans.end());
-                    ans+='8';
-                    ans+=s2;
-                    
-                }
-            }
-        }else if(k==7){
-            
-            
-            for(int i=0;i<n;i++){
-                ans+='9';
-            }
+        vector<vector<bool>> dp((n + 1) / 2 + 1, vector<bool>(k, false));
+        vector<vector<int>> prev((n + 1) / 2 + 1, vector<int>(k, -1));
+        dp[(n + 1) / 2][0] = true;
 
-            if(n%2==1){
-                for(char i='9';i>='0';i--){
-                    ans[n/2]=i;
-                    if(isDivisibleBy7(ans)){
-                        return ans;
-                    }
-                }
-            }else{
-                for(char i='9';i>='0';i--){
-                    ans[n/2]=i;
-                    ans[n/2-1]=i;
-                    if(isDivisibleBy7(ans)){
-                        return ans;
-                    }
-                }
-            }
-            
+        vector<int> p(n + 1, 1);
+        for (int i = 1; i <= n; ++i) {
+            p[i] = (p[i - 1] * 10) % k;
         }
 
-        
+        for (int i = (n + 1) / 2 - 1; i >= 0; --i) {
+            for (int r = 0; r < k; ++r) {
+                if (!dp[i + 1][r]) continue;
+                for (int d = 9; d >= 0; --d) {
+                    int coeff = p[i];
+                    if (i != n - i - 1) {
+                        coeff = (coeff + p[n - i - 1]) % k;
+                    }
+                    int nr = (r - d * coeff) % k;
+                    if (nr < 0) nr += k;
+                    dp[i][nr] = true;
+                    prev[i][nr] = r;
+                }
+            }
+        }
 
+        string ans(n, '0');
+        int curr_r = 0;
+        for (int i = 0; i < (n + 1) / 2; ++i) {
+            bool found = false;
+            for (int d = 9; d >= 0; --d) {
+                int coeff = p[i];
+                if (i != n - i - 1) {
+                    coeff = (coeff + p[n - i - 1]) % k;
+                }
+                int nr = (curr_r + d * coeff) % k;
+                if (dp[i + 1][nr]) {
+                    ans[i] = ans[n - i - 1] = '0' + d;
+                    curr_r = nr;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) return "0";
+        }
         return ans;
-        
     }
 };
