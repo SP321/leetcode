@@ -1,17 +1,9 @@
 class Solution:
     def maxProfit(self, prices: List[int]) -> int:
-        n=len(prices)   
-        @cache
-        def dfs(i,b,s):
-            if i==n:
-                if b==s:
-                    return 0
-                return float("-inf")
-            ans=dfs(i+1,b,s)
-            if s>0:
-                if b==s:
-                    ans=max(ans,dfs(i+1,b-1,s)-prices[i])
-                else:
-                    ans=max(ans,dfs(i+1,b,s-1)+prices[i])
-            return ans
-        return dfs(0,2,2)
+        dp = [[inf, 0] for _ in range(3)]
+        for price in prices:
+            dp[1][0] = min(dp[1][0], price - dp[0][1])
+            dp[1][1] = max(dp[1][1], price - dp[1][0])
+            dp[2][0] = min(dp[2][0], price - dp[1][1])
+            dp[2][1] = max(dp[2][1], price - dp[2][0])
+        return dp[-1][-1]
