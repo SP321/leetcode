@@ -1,21 +1,21 @@
 class Solution:
     def maxValue(self, nums: List[int], k: int) -> int:
         n=len(nums)
-        def get_possible(a):
-            t1=set([(0,0)])
+        def get_map(a): # d[SUBSEEUQNCE_OR]=min_end_index+1
+            dp0=set([(0,0)])
             d=defaultdict(lambda :-1)
             for i,x in enumerate(a):
-                t2=set()
-                for taken,val in t1:
-                    if taken<k:
-                        t2.add( (taken+1,val|x) )
-                        if taken+1==k:
-                            if val|x not in d:
-                                d[val|x]=i+1
-                t1|=t2
+                dp1=set()
+                for taken,val in dp0:
+                    if taken+1==k:
+                        if val|x not in d:
+                            d[val|x]=i+1
+                    else:
+                        dp1.add( (taken+1,val|x) )
+                dp0|=dp1
             return d
-        a=get_possible(nums)
-        b=get_possible(nums[::-1])
+        a=get_map(nums)
+        b=get_map(nums[::-1])
         ans=-inf
         for v1,x in a.items():
             for v2,y in b.items():
