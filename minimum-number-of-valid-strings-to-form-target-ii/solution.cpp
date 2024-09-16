@@ -1,88 +1,73 @@
-const int INF = 1e9;
+//https://cp-algorithms.com/string/aho_corasick.html
+const int K = 26;
 
-class Vertex {
-public:
-    unordered_map<char, Vertex*> next;  // Transitions to child nodes (dictionary of children)
-    Vertex* parent;                     // Reference to the parent vertex
-    char pch;                           // Character leading to this vertex from its parent
-    Vertex* link;                       // Suffix link (failure link)
-    unordered_map<char, Vertex*> go;    // Transitions to child nodes (using dictionaries)
-    int ln;                             // Length of the string ending at this vertex
-
-    Vertex(Vertex* parent = nullptr, char ch = '$', int ln = 0)
-        : parent(parent), pch(ch), link(nullptr), ln(ln) {}
-};
-
-class AhoCorasick {
-public:
-    Vertex* root;
-
-    AhoCorasick(const vector<string>& words) {
-        root = new Vertex();
-        for (const auto& word : words) {
-            add_string(word);
-        }
-    }
-
-    void add_string(const string& word) {
-        Vertex* node = root;
-        for (int i = 0; i < word.length(); ++i) {
-            char ch = word[i];
-            if (node->next.find(ch) == node->next.end()) {
-                node->next[ch] = new Vertex(node, ch, i + 1);
-            }
-            node = node->next[ch];
-        }
-    }
-
-    Vertex* get_link(Vertex* node) {
-        if (node->link == nullptr) {
-            if (node == root || node->parent == root) {
-                node->link = root;
-            } else {
-                node->link = go(get_link(node->parent), node->pch);
-            }
-        }
-        return node->link;
-    }
-
-    Vertex* go(Vertex* node, char ch) {
-        if (node->go.find(ch) == node->go.end()) {
-            if (node->next.find(ch) != node->next.end()) {
-                node->go[ch] = node->next[ch];
-            } else {
-                node->go[ch] = (node == root) ? root : go(get_link(node), ch);
-            }
-        }
-        return node->go[ch];
-    }
-
-    vector<pair<int, int>> iter_matches(const string& sentence) {
-        vector<pair<int, int>> matches;
-        Vertex* node = root;
-        for (int i = 0; i < sentence.length(); ++i) {
-            node = go(node, sentence[i]);
-            if (node->ln > 0) {
-                matches.push_back({i, node->ln});
-            }
-        }
-        return matches;
+struct Vertex {
+    int next[K];
+    int p = -1;
+    char pch;
+    int link = -1;
+    int go[K];
+    int ln=0;
+    Vertex(int p=-1, char ch='$', int ln=0) : p(p), pch(ch), ln(ln) {
+        fill(begin(next), end(next), -1);
+        fill(begin(go), end(go), -1);
     }
 };
+
+vector<Vertex> t(1);
+
+void add_string(string const& s) {
+    int v = 0;
+    for (char ch : s) {
+        int c = ch - 'a';
+        if (t[v].next[c] == -1) {
+            t[v].next[c] = t.size();
+            t.emplace_back(v, ch, t[v].ln+1 );
+        }
+        v = t[v].next[c];
+    }
+}
+
+int go(int v, char ch);
+
+int get_link(int v) {
+    if (t[v].link == -1) {
+        if (v == 0 || t[v].p == 0)
+            t[v].link = 0;
+        else
+            t[v].link = go(get_link(t[v].p), t[v].pch);
+    }
+    return t[v].link;
+}
+
+int go(int v, char ch) {
+    int c = ch - 'a';
+    if (t[v].go[c] == -1) {
+        if (t[v].next[c] != -1)
+            t[v].go[c] = t[v].next[c];
+        else
+            t[v].go[c] = v == 0 ? 0 : go(get_link(v), ch);
+    }
+    return t[v].go[c];
+} 
 
 class Solution {
 public:
     int minValidStrings(vector<string>& words, const string& target) {
-        AhoCorasick tr(words);
+        t.clear(); t.shrink_to_fit(); t = vector<Vertex>(1);
+        for(auto &x:words)
+            add_string(x);
         int n = target.size();
-        vector<int> dp(n + 1, INF);
+        vector<int> dp(n + 1, 1e9);
         dp[0] = 0;
-
-        auto matches = tr.iter_matches(target);
-        for (auto& [i, ln] : matches) {
-            dp[i + 1] = min(dp[i + 1], dp[i + 1 - ln] + 1);
+        int cur=0;
+        for (int i=0;i<target.size();i++){
+            char ch=target[i];
+            cur=go(cur,ch);
+            if(t[cur].ln>0) 
+                dp[i + 1] = min(dp[i + 1], dp[i + 1 - t[cur].ln] + 1);
         }
 
-        return dp[n] != INF ? dp[n] : -1;
+        return dp[n] != 1e9 ? dp[n] : -1;
     }
 };
