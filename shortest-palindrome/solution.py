@@ -28,12 +28,12 @@ class Solution:
         if s=='':
             return ''
         n=len(s)
-        a=s+s[::-1]
-        z=z_function(a)
+        a=s+'$'+s[::-1]
+        z=z_function(a)[n+1:]
         best=0
-        for i in range(n,n*2):
+        for i in range(n):
             l=z[i]
-            if i+l==n*2:
+            if i+l==n:
                 l=min(l,n)
                 best=max(best,l)
-        return s[best:][::-1]+s
+        return s[:best-1:-1]+s
