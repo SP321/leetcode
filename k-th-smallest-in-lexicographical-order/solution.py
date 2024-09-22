@@ -1,5 +1,6 @@
 class Solution:
     def findKthNumber(self, n: int, k: int) -> int:
+        
         def fn(x): 
             ans, diff = 0, 1
             while x <= n: 
@@ -14,3 +15,4 @@ class Solution:
             if k > cnt: k -= cnt; x += 1
             else: k -= 1; x *= 10 
         return x
+
