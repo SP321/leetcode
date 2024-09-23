@@ -1,5 +1,6 @@
 class Solution:
     def minExtraChar(self, s: str, dictionary: List[str]) -> int:
+        dictionary=set(dictionary)
         n = len(s)
         @cache
         def dp(i):
