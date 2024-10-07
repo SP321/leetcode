@@ -1,10 +1,12 @@
 class Solution:
     def minLength(self, s: str) -> int:
-        def rem(s):
-            s=s.replace('AB','')
-            s=s.replace('CD','')
-            print(s)
-            return s
-        while('AB' in s or 'CD' in s):
-            s=rem(s)
-        return len(s)
+        st=deque()
+        for x in s:
+            if st and x=='D' and st[-1]=='C':
+                st.pop()
+            elif st and x=='B' and st[-1]=='A':
+                st.pop()
+            else:
+                st.append(x)
+        return len(st)
+            
