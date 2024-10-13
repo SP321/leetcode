@@ -1,40 +1,28 @@
 class Solution:
     def smallestRange(self, nums: List[List[int]]) -> List[int]:
-        a = Counter()
-        for index, row in enumerate(nums):
-            for num in row:
-                a[num] |= (1 << index)
-
-        n = len(nums)
-        counter = Counter()
-
-        def add(x):
-            if x in a:
-                mask = a[x]
-                for bit in range(n):
-                    if mask & (1 << bit):
-                        counter[bit] += 1
-
-        def rem(x):
-            if x in a:
-                mask = a[x]
-                for bit in range(n):
-                    if mask & (1 << bit):
-                        counter[bit] -= 1
-                        if counter[bit] == 0:
-                            del counter[bit]
-
-        sorted_keys = sorted(a.keys())
+        n=len(nums)
+        d=Counter()
+        for i,arr in enumerate(nums):
+            for x in arr:
+                d[x]|=1<<i
+        a=sorted(d.keys())
+        m=len(a)
         i=0
-        ans = [float('-inf'), float('inf')]
-        
-        for j in range(len(sorted_keys)):
-            add(sorted_keys[j])
-            while len(counter) == n and i<=j:
-                cur = sorted_keys[j] - sorted_keys[i]
-                if cur < ans[1] - ans[0]:
-                    ans = [sorted_keys[i], sorted_keys[j]]
-                rem(sorted_keys[i])
-                i += 1
-        
-        return ans
+        start,end=0,a[-1]
+        c=Counter()
+        for j,x in enumerate(a):
+            for bit in range(n):
+                if (d[x]>>bit) &1 >0 :
+                    c[bit]+=1
+            while i<=j and len(c)==n:
+                for bit in range(n):
+                    if (d[a[i]]>>bit)&1 >0 :
+                        c[bit]-=1
+                        if c[bit]==0:
+                            del c[bit]
+                if a[j]-a[i]<end-start:
+                    start,end=a[i],a[j]
+                i+=1
+        return start,end
+
+
