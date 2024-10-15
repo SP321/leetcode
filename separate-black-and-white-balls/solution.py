@@ -7,4 +7,3 @@ class Solution:
                 ans+=(j-i)
                 i+=1
         return ans
-            
