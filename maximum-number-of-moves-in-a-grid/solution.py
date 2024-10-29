@@ -2,7 +2,6 @@ class Solution:
     def maxMoves(self, grid: List[List[int]]) -> int:
         n=len(grid)
         m=len(grid[0])
-        seen=[[False]*m for i in range(n)]
         ans=0
         dp=[[-1]*m for i in range(n)]
         def dfs(i,j):
