@@ -17,8 +17,6 @@ class Solution:
         dist = {start: 0}
         while q:
             cur, cost = q.popleft()
-            if dist[cur] != cost:
-                continue
             if cur[1] == (1,2,3,4,5,0):
                 return cost
             state=list(cur[1])
