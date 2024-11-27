@@ -7,13 +7,20 @@ class Solution:
        
         for u,v in queries:
             g[u].append(v)
-            @cache
-            def dfs(i):
-                if i==n-1:
-                    return 0
-                ans=inf
-                for v in g[i]:
-                    ans=min(ans,dfs(v)+1)
-                return ans
-            ans.append(dfs(0))
+            q=[0]
+            visited=set(q)
+            c=0
+            while q:
+                q2=[]
+                for u in q:
+                    if u==n-1:
+                        q2=[]
+                        break
+                    for v in g[u]:
+                        if v not in visited:
+                            q2.append(v)
+                            visited.add(v)
+                q=q2
+                c+=1
+            ans.append(c-1)
         return ans
